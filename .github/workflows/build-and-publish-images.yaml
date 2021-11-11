@@ -1,0 +1,86 @@
+name: Build and Publish Images
+
+on:
+  workflow_dispatch:
+
+jobs:
+  buildAndPush:
+    name: Build and Push docker images to HitHub packages
+    runs-on: ubuntu-latest
+    env:
+      working-directory: ./apps
+    steps:
+      - name: Checkout the repo
+        uses: actions/checkout@v2
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with: 
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and Push SCM Contacts API
+        uses: docker/build-push-action@v2
+        with:
+          context: ./apps/dotnetcore/Scm
+          file: ./apps/dotnetcore/Scm/Adc.Scm.Api/Dockerfile
+          push: true
+          tags: ghcr.io/${{ github.repository_owner }}/adc-contacts-api:1.0
+
+      - name: Build and Push SCM Frontend UI
+        uses: docker/build-push-action@v2
+        with:
+          context: ./apps/frontend/scmfe
+          file: ./apps/frontend/scmfe/Dockerfile
+          push: true
+          tags: ghcr.io/${{ github.repository_owner }}/adc-frontend-ui:1.0
+
+      - name: Build and Push SCM Resource API
+        uses: docker/build-push-action@v2
+        with:
+          context: ./apps/dotnetcore/Scm.Resources/Adc.Scm.Resources.Api
+          file: ./apps/dotnetcore/Scm.Resources/Adc.Scm.Resources.Api/Dockerfile
+          push: true
+          tags: ghcr.io/${{ github.repository_owner }}/adc-resources-api:1.0
+
+      - name: Build and Push SCM ImageResizer Func
+        uses: docker/build-push-action@v2
+        with:
+          context: ./apps/dotnetcore/Scm.Resources/Adc.Scm.Resources.ImageResizer
+          file: ./apps/dotnetcore/Scm.Resources/Adc.Scm.Resources.ImageResizer/Dockerfile
+          push: true
+          tags: ghcr.io/${{ github.repository_owner }}/adc-resources-func:1.0
+
+      - name: Build and Push SCM Search API
+        uses: docker/build-push-action@v2
+        with:
+          context: ./apps/dotnetcore/Scm.Search/Adc.Scm.Search.Api
+          file: ./apps/dotnetcore/Scm.Search/Adc.Scm.Search.Api/Dockerfile
+          push: true
+          tags: ghcr.io/${{ github.repository_owner }}/adc-search-api:1.0
+
+      - name: Build and Push SCM Search Indexer Func
+        uses: docker/build-push-action@v2
+        with:
+          context: ./apps/dotnetcore/Scm.Search/Adc.Scm.Search.Indexer
+          file: ./apps/dotnetcore/Scm.Search/Adc.Scm.Search.Indexer/Dockerfile
+          push: true
+          tags: ghcr.io/${{ github.repository_owner }}/adc-search-func:1.0
+
+      - name: Build and Push SCM VisitReports API
+        uses: docker/build-push-action@v2
+        with:
+          context: ./apps/nodejs/visitreport
+          file: ./apps/nodejs/visitreport/Dockerfile
+          push: true
+          tags: ghcr.io/${{ github.repository_owner }}/adc-visitreports-api:1.0
+
+      - name: Build and Push SCM TextAnalytics Func
+        uses: docker/build-push-action@v2
+        with:
+          context: ./apps/nodejs/textanalytics
+          file: ./apps/nodejs/textanalytics/Dockerfile
+          push: true
+          tags: ghcr.io/${{ github.repository_owner }}/adc-textanalytics-func:1.0
+        
