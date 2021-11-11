@@ -1,9 +1,3 @@
-provider "azurerm" {
-  version = "~> 2.49.0"
-  features {
-  }
-}
-
 # CosmosDB
 
 resource "azurerm_cosmosdb_account" "cda" {

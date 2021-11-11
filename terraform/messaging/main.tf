@@ -1,8 +1,3 @@
-provider "azurerm" {
-  version = "~> 2.49.0"
-  features {
-  }
-}
 
 resource "azurerm_servicebus_namespace" "sbn" {
   name                = "${var.prefix}sbn${var.env}"

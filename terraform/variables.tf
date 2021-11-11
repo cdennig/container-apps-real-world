@@ -5,7 +5,7 @@ variable "location" {
 
 variable "prefix" {
   type    = string
-  default = "dcdcd7"
+  default = "dctest"
   validation {
     condition     = length(var.prefix) <= 6
     error_message = "The prefix value must not be longer than 6 characters."

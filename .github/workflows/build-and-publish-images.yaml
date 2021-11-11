@@ -5,7 +5,7 @@ on:
 
 jobs:
   buildAndPush:
-    name: Build and Push docker images to HitHub packages
+    name: Build and Push docker images to GitHub packages
     runs-on: ubuntu-latest
     env:
       working-directory: ./apps
