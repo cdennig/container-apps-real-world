@@ -14,7 +14,7 @@ resource "azurerm_application_insights" "appinsights" {
 }
 
 resource "azurerm_key_vault" "keyvault" {
-  name                        = "kv-${var.prefix}scm${var.env}"
+  name                        = "${var.prefix}scm${var.env}kv"
   location                    = var.location
   resource_group_name         = var.resource_group_name
   enabled_for_disk_encryption = false
@@ -29,9 +29,17 @@ resource "azurerm_key_vault" "keyvault" {
     object_id = data.azurerm_client_config.current.object_id
 
     secret_permissions = [
-      "Get","Backup", "Delete", "List", "Purge", "Recover", "Restore", "Set"
+      "Get", "Backup", "Delete", "List", "Purge", "Recover", "Restore", "Set"
     ]
   }
+}
+
+resource "azurerm_log_analytics_workspace" "laws" {
+  name                = "${var.prefix}scm${var.env}laws"
+  location            = var.location
+  resource_group_name = var.resource_group_name
+  sku                 = "PerGB2018"
+  retention_in_days   = 30
 }
 
 output "ai_instrumentation_key" {

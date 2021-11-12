@@ -91,7 +91,7 @@ resource "azurerm_search_service" "search" {
 # Cognitive Services
 
 resource "azurerm_cognitive_account" "textanalytics" {
-  name                = "${var.prefix}cognitive${var.env}"
+  name                = "${var.prefix}cog${var.env}"
   location            = var.location
   resource_group_name = var.resource_group_name
   kind                = "TextAnalytics"

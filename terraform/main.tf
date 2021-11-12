@@ -78,77 +78,84 @@ resource "azurerm_key_vault_secret" "cosmos_primarykey" {
 
 resource "azurerm_key_vault_secret" "sql_connstring" {
   name         = "SQLCONNSTR"
-  value        = module.data.module.data.sqldb_connectionstring
+  value        = module.data.sqldb_connectionstring
   key_vault_id = module.common.keyvault_id
 }
 
-# # Data
+resource "azurerm_key_vault_secret" "search_key" {
+  name         = "SEARCHKEY"
+  value        = module.data.search_primary_key
+  key_vault_id = module.common.keyvault_id
+}
 
-# output "search_primary_key_base64" {
-#   value = base64encode(module.data.search_primary_key)
-#   sensitive = true
-# }
+resource "azurerm_key_vault_secret" "search_name" {
+  name         = "SEARCHNAME"
+  value        = module.data.search_name
+  key_vault_id = module.common.keyvault_id
+}
 
-# output "search_name_base64" {
-#   value = base64encode(module.data.search_name)
-#   sensitive = true
-# }
+resource "azurerm_key_vault_secret" "textanalytics_endpoint" {
+  name         = "TAENDPOINT"
+  value        = module.data.textanalytics_endpoint
+  key_vault_id = module.common.keyvault_id
+}
 
-# output "textanalytics_endpoint_base64" {
-#   value = base64encode(module.data.textanalytics_endpoint)
-#   sensitive = true
-# }
+resource "azurerm_key_vault_secret" "textanalytics_key" {
+  name         = "TAKEY"
+  value        = module.data.textanalytics_key
+  key_vault_id = module.common.keyvault_id
+}
 
-# output "textanalytics_key_base64" {
-#   value = base64encode(module.data.textanalytics_key)
-#   sensitive = true
-# }
+resource "azurerm_key_vault_secret" "res_conn" {
+  name         = "RESCONNSTR"
+  value        = module.storage.resources_primary_connection_string
+  key_vault_id = module.common.keyvault_id
+}
 
-# # Storage
+resource "azurerm_key_vault_secret" "func_conn" {
+  name         = "FUNCCONNSTR"
+  value        = module.storage.funcs_primary_connection_string
+  key_vault_id = module.common.keyvault_id
+}
 
-# output "resources_primary_connection_string_base64" {
-#   value = base64encode(module.storage.resources_primary_connection_string)
-#   sensitive = true
-# }
+resource "azurerm_key_vault_secret" "thumbnail_listen_connectionstring" {
+  name         = "THUMBLISTENCONNSTR"
+  value        = module.messaging.thumbnail_listen_connectionstring
+  key_vault_id = module.common.keyvault_id
+}
 
-# output "funcs_primary_connection_string_base64" {
-#   value = base64encode(module.storage.funcs_primary_connection_string)
-#   sensitive = true
-# }
+resource "azurerm_key_vault_secret" "thumbnail_send_connectionstring" {
+  name         = "THUMBSENDCONNSTR"
+  value        = module.messaging.thumbnail_send_connectionstring
+  key_vault_id = module.common.keyvault_id
+}
 
-# # Messaging
+resource "azurerm_key_vault_secret" "contacts_listen_connectionstring" {
+  name         = "CONTACTSLISTENCONNSTR"
+  value        = module.messaging.contacts_listen_connectionstring
+  key_vault_id = module.common.keyvault_id
+}
 
-# output "thumbnail_listen_connectionstring_base64" {
-#   value = base64encode(module.messaging.thumbnail_listen_connectionstring)
-#   sensitive = true
-# }
+resource "azurerm_key_vault_secret" "contacts_listen_with_entity_connectionstring" {
+  name         = "CONTACTSLISTENWITHENTCONNSTR"
+  value        = module.messaging.contacts_listen_with_entity_connectionstring
+  key_vault_id = module.common.keyvault_id
+}
 
-# output "thumbnail_send_connectionstring_base64" {
-#   value = base64encode(module.messaging.thumbnail_send_connectionstring)
-#   sensitive = true
-# }
+resource "azurerm_key_vault_secret" "contacts_send_connectionstring" {
+  name         = "CONTACTSSENDCONNSTR"
+  value        = module.messaging.contacts_send_connectionstring
+  key_vault_id = module.common.keyvault_id
+}
 
-# output "contacts_listen_connectionstring_base64" {
-#   value = base64encode(module.messaging.contacts_listen_connectionstring)
-#   sensitive = true
-# }
+resource "azurerm_key_vault_secret" "visitreports_listen_connectionstring" {
+  name         = "VRLISTENCONNSTR"
+  value        = module.messaging.visitreports_listen_connectionstring
+  key_vault_id = module.common.keyvault_id
+}
 
-# output "contacts_listen_with_entity_connectionstring_base64" {
-#   value = base64encode(module.messaging.contacts_listen_with_entity_connectionstring)
-#   sensitive = true
-# }
-
-# output "contacts_send_connectionstring_base64" {
-#   value = base64encode(module.messaging.contacts_send_connectionstring)
-#   sensitive = true
-# }
-
-# output "visitreports_listen_connectionstring_base64" {
-#   value = base64encode(module.messaging.visitreports_listen_connectionstring)
-#   sensitive = true
-# }
-
-# output "visitreports_send_connectionstring_base64" {
-#   value = base64encode(module.messaging.visitreports_send_connectionstring)
-#   sensitive = true
-# }
+resource "azurerm_key_vault_secret" "visitreports_send_connectionstring" {
+  name         = "VRSENDCONNSTR"
+  value        = module.messaging.visitreports_send_connectionstring
+  key_vault_id = module.common.keyvault_id
+}
