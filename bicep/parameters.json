@@ -1,0 +1,22 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "env": {
+          "value": "devd4"
+      },
+      "sqlUserPwd": {
+          "value": "Ch@angeMe!1"
+      },
+      "roleAssignments": {
+          "value":  [
+            {
+              "roleDefinitionIdOrName": "Key Vault Administrator (preview)",
+              "principalIds": [
+                "5af8b213-0f0e-490e-bdd7-a574276ef0d5"
+              ]
+            }
+          ]
+      }
+    }
+  }
