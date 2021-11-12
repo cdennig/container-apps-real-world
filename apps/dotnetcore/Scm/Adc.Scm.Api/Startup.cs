@@ -12,10 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
 using System;
-using System.Data.SqlClient;
 
 namespace Adc.Scm.Api
 {
@@ -40,18 +37,9 @@ namespace Adc.Scm.Api
             // Initialize ApplicationInsights
             services.AddSingleton<ITelemetryInitializer, ApiTelemetryInitializer>();
             services.AddApplicationInsightsTelemetry();
-            services.AddApplicationInsightsTelemetryProcessor<SqlKeepAliveDependencyFilter>();
 
-            services.AddHostedService<StartupHostedService>();
-            services.AddSingleton<StartupHostedServiceHealthCheck>();
 
-            services.AddHealthChecks()
-                .AddCheck<StartupHostedServiceHealthCheck>(
-                    "hosted_service_startup",
-                    failureStatus: HealthStatus.Degraded,
-                    tags: new[] { "ready" });
-
-            services.AddControllers();
+            services.AddControllers();            
 
             if (HostingEnvironment.IsDevelopment())
             {
@@ -80,33 +68,17 @@ namespace Adc.Scm.Api
                 if (!string.IsNullOrEmpty(connStr))
                 {
                     services.AddEntityFrameworkSqlServer();
-
-                    services.AddDbContext<ContactDbContext>(options => 
-                    {
-                        var connectionTimeout = Configuration.GetValue<Nullable<int>>("SqlConnectionTimeoutSec");
-                        var connectionRetryCount = Configuration.GetValue<Nullable<int>>("SqlConnectionRetryCount");
-                        var commandTimeout = Configuration.GetValue<Nullable<int>>("SqlCommandTimeoutSec");
-
-                        var sqlConnectionBuilder = new SqlConnectionStringBuilder(connStr);
-
-                        options.UseSqlServer(sqlConnectionBuilder.ConnectionString, sqlSrvOpts => 
-                        {
-                            sqlSrvOpts.EnableRetryOnFailure(
-                                maxRetryCount: 10,
-                                maxRetryDelay: TimeSpan.FromSeconds(30),
-                                errorNumbersToAdd: null);
-                        });
-                    });
+                    services.AddDbContext<ContactDbContext>(options => options.UseSqlServer(connStr));
                     services.AddScoped<IContactRepository, ContactRepository>();
                 }
                 // Use CosmosDb if no ConnectionString is specified
                 else
-                {
+                {                    
                     services.Configure<Repository.CosmosDb.RepositoryOptions>(options => Configuration.Bind("CosmosOptions", options));
                     services.AddScoped<IContactRepository, Repository.CosmosDb.ContactRepository>();
                 }
             }
-
+                        
             services.AddScoped<MapperService>();
             services.AddScoped<ClaimsProviderService>();
             services.Configure<EventServiceOptions>(options => Configuration.Bind("EventServiceOptions", options));
@@ -137,7 +109,7 @@ namespace Adc.Scm.Api
 
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/contacts/swagger/v1/swagger.json", "Contacts API v1");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Contacts API v1");
                 c.RoutePrefix = string.Empty;
             });
 
@@ -149,8 +121,6 @@ namespace Adc.Scm.Api
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapHealthChecks("/health/live", new HealthCheckOptions { Predicate = _ => false });
-                endpoints.MapHealthChecks("/health/ready", new HealthCheckOptions { Predicate = (check) => check.Tags.Contains("ready") });
                 endpoints.MapControllers();
             });
         }

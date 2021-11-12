@@ -14,8 +14,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace Adc.Scm.Search.Api
 {
@@ -33,15 +31,6 @@ namespace Adc.Scm.Search.Api
         {
             services.AddSingleton<ITelemetryInitializer, ApiTelemetryInitializer>();
             services.AddApplicationInsightsTelemetry();
-
-            services.AddHostedService<StartupHostedService>();
-            services.AddSingleton<StartupHostedServiceHealthCheck>();
-
-            services.AddHealthChecks()
-                .AddCheck<StartupHostedServiceHealthCheck>(
-                    "hosted_service_startup",
-                    failureStatus: HealthStatus.Degraded,
-                    tags: new[] { "ready" });
 
             services.AddControllers();
 
@@ -74,7 +63,7 @@ namespace Adc.Scm.Search.Api
 
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/search/swagger/v1/swagger.json", "Search API v1");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Search API v1");
                 c.RoutePrefix = string.Empty;
             });
 
@@ -87,8 +76,6 @@ namespace Adc.Scm.Search.Api
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapHealthChecks("/health/live", new HealthCheckOptions { Predicate = _ => false });
-                endpoints.MapHealthChecks("/health/ready", new HealthCheckOptions { Predicate = (check) => check.Tags.Contains("ready") });
                 endpoints.MapControllers();
             });
         }
