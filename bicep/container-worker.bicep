@@ -3,6 +3,7 @@ param location string = resourceGroup().location
 param environmentId string
 param containerImage string
 param env array = []
+param secrets array = []
 param minReplicas int = 0
 @allowed([
   'multiple'
@@ -20,6 +21,7 @@ resource containerApp 'Microsoft.Web/containerApps@2021-03-01' = {
   properties: {
     kubeEnvironmentId: environmentId
     configuration: {
+      secrets: secrets
       activeRevisionsMode: revisionMode
     }
     template: {

@@ -64,6 +64,20 @@ module visitreportsService '../container-http.bicep' = {
     containerPort: 3000
     isExternalIngress: true
     minReplicas: 2
+    secrets:[
+      {
+        name: 'sbvrconnection'
+        value: listKeys(sbtVisitReportsSendRule.id, sbtVisitReportsSendRule.apiVersion).primaryConnectionString
+      }
+      {
+        name: 'sbcontactconnection'
+        value: listKeys(sbtContactsListenRule.id, sbtContactsListenRule.apiVersion).primaryConnectionString
+      }
+      {
+        name: 'cosmoskey'
+        value: listKeys(cosmos.id, cosmos.apiVersion).primaryMasterKey
+      }
+    ]
     env: [
       {
         name: 'APPINSIGHTS_KEY'
@@ -75,11 +89,11 @@ module visitreportsService '../container-http.bicep' = {
       }
       {
         name: 'CUSTOMCONNSTR_COSMOSKEY'
-        value: listKeys(cosmos.id, cosmos.apiVersion).primaryMasterKey
+        secretRef: 'cosmoskey'
       }
       {
         name: 'CUSTOMCONNSTR_SBVRTOPIC_CONNSTR'
-        value: listKeys(sbtVisitReportsSendRule.id, sbtVisitReportsSendRule.apiVersion).primaryConnectionString
+        secretRef: 'sbvrconnection'
       }
       {
         name: 'CUSTOMCONNSTR_SBCONTACTSTOPIC_CONNSTR'
@@ -97,10 +111,28 @@ module funcTextAnalyticsService '../container-worker.bicep' = {
     environmentId: containerEnvId
     containerImage: 'ghcr.io/cdennig/adc-textanalytics-func:1.0'
     minReplicas: 2
+    secrets:[
+      {
+        name: 'functionsstorage'
+        value: stgForFunctionConnectionString
+      }
+      {
+        name: 'sbconnection'
+        value: replace(listKeys(sbtVisitReportsListenRule.id, sbtVisitReportsListenRule.apiVersion).primaryConnectionString, 'EntityPath=${sbtVisitReportsName}', '')
+      }
+      {
+        name: 'cosmoskey'
+        value: listKeys(cosmos.id, cosmos.apiVersion).primaryMasterKey
+      }
+      {
+        name: 'takey'
+        value: textAnalyticsKey
+      }
+    ]
     env: [
       {
         name: 'AzureWebJobsStorage'
-        value: stgForFunctionConnectionString
+        secretRef: 'functionsstorage'
       }
       {
         name: 'FUNCTIONS_WORKER_RUNTIME'
@@ -116,7 +148,7 @@ module funcTextAnalyticsService '../container-worker.bicep' = {
       }
       {
         name: 'ServiceBusConnectionString'
-        value: replace(listKeys(sbtVisitReportsListenRule.id, sbtVisitReportsListenRule.apiVersion).primaryConnectionString, 'EntityPath=${sbtVisitReportsName}', '')
+        secretRef: 'sbconnection'
       }
       {
         name: 'COSMOSDB'
@@ -124,7 +156,7 @@ module funcTextAnalyticsService '../container-worker.bicep' = {
       }
       {
         name: 'COSMOSKEY'
-        value: listKeys(cosmos.id, cosmos.apiVersion).primaryMasterKey
+        secretRef: 'cosmoskey'
       }
       {
         name: 'TA_SUBSCRIPTIONENDPOINT'
@@ -132,7 +164,7 @@ module funcTextAnalyticsService '../container-worker.bicep' = {
       }
       {
         name: 'TA_SUBSCRIPTION_KEY'
-        value: textAnalyticsKey
+        secretRef: 'takey'
       }
     ]
   }

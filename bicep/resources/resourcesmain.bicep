@@ -49,6 +49,16 @@ module resourcesService '../container-http.bicep' = {
     containerPort: 5000
     isExternalIngress: true
     minReplicas: 2
+    secrets: [
+      {
+        name: 'resourcesstorage'
+        value: storageConnString
+      }
+      {
+        name: 'sbqueue'
+        value: listKeys(sbqThumbnailsSendRule.id, sbqThumbnailsSendRule.apiVersion).primaryConnectionString
+      }
+    ]
     env: [
       {
         name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
@@ -56,7 +66,7 @@ module resourcesService '../container-http.bicep' = {
       }
       {
         name: 'ImageStoreOptions__StorageAccountConnectionString'
-        value: storageConnString
+        secretRef: 'resourcesstorage'
       }
       {
         name: 'ImageStoreOptions__ImageContainer'
@@ -68,7 +78,7 @@ module resourcesService '../container-http.bicep' = {
       }
       {
         name: 'ServiceBusQueueOptions__ThumbnailQueueConnectionString'
-        value: listKeys(sbqThumbnailsSendRule.id, sbqThumbnailsSendRule.apiVersion).primaryConnectionString
+        secretRef: 'sbqueue'
       }
       {
         name: 'ServiceBusQueueOptions__ImageContainer'
@@ -77,10 +87,6 @@ module resourcesService '../container-http.bicep' = {
       {
         name: 'ServiceBusQueueOptions__ThumbnailContainer'
         value: 'thumbnails'
-      }
-      {
-        name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
-        value: appi.properties.InstrumentationKey
       }
     ]
   }
@@ -94,14 +100,28 @@ module funcImageResizerService '../container-worker.bicep' = {
     environmentId: containerEnvId
     containerImage: 'ghcr.io/cdennig/adc-resources-func:1.0'
     minReplicas: 2
-    env: [
+    secrets: [
       {
-        name: 'AzureWebJobsStorage'
+        name: 'functionstorage'
         value: stgForFunctionConnectionString
       }
       {
+        name: 'sbconnection'
+        value: replace(listKeys(sbqThumbnailsListenRule.id, sbqThumbnailsListenRule.apiVersion).primaryConnectionString, 'EntityPath=${sbqThumbnailsName}', '')
+      }
+      {
+        name: 'resourcesstorage'
+        value: storageConnString
+      }
+    ]
+    env: [
+      {
+        name: 'AzureWebJobsStorage'
+        secretRef: 'functionstorage'
+      }
+      {
         name: 'WEBSITE_CONTENTAZUREFILECONNECTIONSTRING'
-        value: stgForFunctionConnectionString
+        secretRef: 'functionstorage'
       }
       {
         name: 'WEBSITE_CONTENTSHARE'
@@ -113,7 +133,7 @@ module funcImageResizerService '../container-worker.bicep' = {
       }
       {
         name: 'ServiceBusConnectionString'
-        value: replace(listKeys(sbqThumbnailsListenRule.id, sbqThumbnailsListenRule.apiVersion).primaryConnectionString, 'EntityPath=${sbqThumbnailsName}', '')
+        secretRef: 'sbconnection'
       }
       {
         name: 'QueueName'
@@ -129,7 +149,7 @@ module funcImageResizerService '../container-worker.bicep' = {
       }
       {
         name: 'ImageProcessorOptions__StorageAccountConnectionString'
-        value: storageConnString
+        secretRef: 'resourcesstorage'
       }
       {
         name: 'ImageProcessorOptions__ImageWidth'

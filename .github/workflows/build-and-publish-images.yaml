@@ -34,7 +34,7 @@ jobs:
           context: ./apps/frontend/scmfe
           file: ./apps/frontend/scmfe/Dockerfile
           push: true
-          tags: ghcr.io/${{ github.repository_owner }}/adc-frontend-ui:1.0
+          tags: ghcr.io/${{ github.repository_owner }}/adc-frontend-ui:2.0
 
       - name: Build and Push SCM Resource API
         uses: docker/build-push-action@v2

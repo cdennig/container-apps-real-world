@@ -43,10 +43,16 @@ module contactsService '../container-http.bicep' = {
     containerPort: 5000
     isExternalIngress: true
     minReplicas: 2
+    secrets: [
+      {
+        name: 'sqlconnectionstring'
+        value: sqlConnString
+      }
+    ]
     env: [
       {
         name: 'ConnectionStrings__DefaultConnectionString'
-        value: sqlConnString
+        secretRef: 'sqlconnectionstring'
       }
       {
         name: 'EventServiceOptions__ServiceBusConnectionString'

@@ -46,6 +46,12 @@ module searchService '../container-http.bicep' = {
     containerPort: 5000
     isExternalIngress: true
     minReplicas: 2
+    secrets:[
+      {
+        name: 'searchadminkey'
+        value: searchServiceAdminKey
+      }
+    ]
     env: [
       {
         name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
@@ -61,7 +67,7 @@ module searchService '../container-http.bicep' = {
       }
       {
         name: 'ContactSearchOptions__AdminApiKey'
-        value: searchServiceAdminKey
+        secretRef: 'searchadminkey'
       }
     ]
   }
@@ -75,14 +81,28 @@ module funcSearchIndexerService '../container-worker.bicep' = {
     environmentId: containerEnvId
     containerImage: 'ghcr.io/cdennig/adc-search-func:1.0'
     minReplicas: 2
-    env: [
+    secrets:[
       {
-        name: 'AzureWebJobsStorage'
+        name: 'functionsstorage'
         value: stgForFunctionConnectionString
       }
       {
+        name: 'searchadminkey'
+        value: searchServiceAdminKey
+      }
+      {
+        name: 'sbconnection'
+        value: replace(listKeys(sbtContactsListenRule.id, sbtContactsListenRule.apiVersion).primaryConnectionString, 'EntityPath=${sbtContactsName}', '')
+      }
+    ]
+    env: [
+      {
+        name: 'AzureWebJobsStorage'
+        secretRef: 'functionsstorage'
+      }
+      {
         name: 'WEBSITE_CONTENTAZUREFILECONNECTIONSTRING'
-        value: stgForFunctionConnectionString
+        secretRef: 'functionsstorage'
       }
       {
         name: 'WEBSITE_CONTENTSHARE'
@@ -106,7 +126,7 @@ module funcSearchIndexerService '../container-worker.bicep' = {
       }
       {
         name: 'ServiceBusConnectionString'
-        value: replace(listKeys(sbtContactsListenRule.id, sbtContactsListenRule.apiVersion).primaryConnectionString, 'EntityPath=${sbtContactsName}', '')
+        secretRef: 'sbconnection'
       }
       {
         name: 'ContactIndexerOptions__IndexName'
@@ -118,7 +138,7 @@ module funcSearchIndexerService '../container-worker.bicep' = {
       }
       {
         name: 'ContactIndexerOptions__AdminApiKey'
-        value: searchServiceAdminKey
+        secretRef: 'searchadminkey'
       }
     ]
   }
