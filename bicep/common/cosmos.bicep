@@ -70,3 +70,6 @@ resource cosmosDb 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2021-03-15
     }
   }
 }
+
+output cosmosurl string = cosmos.properties.documentEndpoint
+output cosmoskey string = listKeys(cosmos.id, cosmos.apiVersion).primaryMasterKey

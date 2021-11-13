@@ -32,3 +32,6 @@ resource stgResources 'Microsoft.Storage/storageAccounts@2021-02-01' = {
     name: 'Standard_LRS'
   }
 }
+
+output storageResConnString string =  'DefaultEndpointsProtocol=https;AccountName=${stgResources.name};AccountKey=${listKeys(stgResources.id, stgResources.apiVersion).keys[0].value}'
+output storageForFunctionsConnString string = 'DefaultEndpointsProtocol=https;AccountName=${stgForFunctions.name};AccountKey=${listKeys(stgForFunctions.id, stgForFunctions.apiVersion).keys[0].value}'

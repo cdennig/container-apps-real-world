@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Adc.Scm.Resources.Api.Controllers
 {
     [ApiController]
-    [Route("contactimages")]
+    [Route("api/contactimages")]
     [Produces("application/json")]
     public class ContactImageController : ControllerBase
     {

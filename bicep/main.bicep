@@ -21,16 +21,30 @@ module common 'common/commonmain.bicep' = {
   }
 }
 
-// module contacts 'contacts/contactsmain.bicep' = {
-//   name: 'deployContacts'
-//   params: {
-//     env: env
-//     sqlUserPwd: sqlUserPwd
-//   }
-//   dependsOn: [
-//     common
-//   ]
-// }
+module contacts 'contacts/contactsmain.bicep' = {
+  name: 'deployContacts'
+  params: {
+    env: env
+    containerEnvId: common.outputs.containerEnvId
+    sqlConnString: common.outputs.sqlConnString
+  }
+  dependsOn: [
+    common
+  ]
+}
+
+module resources 'resources/resourcesmain.bicep' = {
+  name: 'deployResources'
+  params: {
+    env: env
+    containerEnvId: common.outputs.containerEnvId
+    storageConnString: common.outputs.storageResConnString
+    stgForFunctionConnectionString: common.outputs.storageForFunctionsConnString
+  }
+  dependsOn: [
+    common
+  ]
+}
 
 // output sqlUserName string = contacts.outputs.sqlUserName
 

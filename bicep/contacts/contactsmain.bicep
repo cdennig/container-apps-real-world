@@ -1,54 +1,61 @@
-@minLength(5)
+@minLength(3)
 @maxLength(8)
 @description('Name of environment')
-param env string = 'devd4'
+param env string
 
-@secure()
-@description('Sql server\'s admin password')
-param sqlUserPwd string
+@description('Environment ID of container app')
+param containerEnvId string
 
-@description('Azure Active Directory Instance')
-param aadInstance string = ''
-@description('Azure AD Tenant Id')
-param aadTenantId string = ''
-@description('Azure Ad App client Id')
-param aadClientId string = ''
-@description('Azure AD Domain name')
-param aadDomain string = ''
-@description('Azure AD App URI')
-param aadClientIdUri string = ''
+// ApplicationInsights name
+var appiName = 'appi-scm-${env}-${uniqueString(resourceGroup().id)}'
+// ServiceBus names
+var sbName = 'sb-scm-${env}-${uniqueString(resourceGroup().id)}'
+var sbtContactsName = 'sbt-contacts'
 
-var sqlUserName = uniqueString(resourceGroup().id, env, sqlUserPwd)
+@description('SQL Connection String')
+param sqlConnString string
 
-var resourceTag = {
-  Environment: env
-  Application: 'SCM'
-  Component: 'SCM-Contacts'
+var location = resourceGroup().location
+
+resource appi 'Microsoft.Insights/components@2015-05-01' existing = {
+  name: appiName
 }
 
-module database 'databases.bicep' = {
-  name: 'deployDatabaseContacts'
+resource sb 'Microsoft.ServiceBus/namespaces@2017-04-01' existing = {
+  name: sbName
+}
+
+resource sbtContacts 'Microsoft.ServiceBus/namespaces/topics@2017-04-01' existing = {
+  name: '${sb.name}/${sbtContactsName}'
+}
+
+resource sbtContactsSendRule 'Microsoft.ServiceBus/namespaces/topics/authorizationRules@2017-04-01' existing = {
+  name: '${sbtContacts.name}/send'
+}
+
+module contactsService '../container-http.bicep' = {
+  name: 'contacts'
   params: {
-    env: env
-    resourceTag: resourceTag
-    sqlUserName: sqlUserName
-    sqlUserPwd: sqlUserPwd
+    location: location
+    containerAppName: 'contacts'
+    environmentId: containerEnvId
+    containerImage: 'ghcr.io/cdennig/adc-contacts-api:2.0'
+    containerPort: 5000
+    isExternalIngress: true
+    minReplicas: 2
+    env: [
+      {
+        name: 'ConnectionStrings__DefaultConnectionString'
+        value: sqlConnString
+      }
+      {
+        name: 'EventServiceOptions__ServiceBusConnectionString'
+        value: listKeys(sbtContactsSendRule.id, sbtContactsSendRule.apiVersion).primaryConnectionString
+      }
+      {
+        name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
+        value: appi.properties.InstrumentationKey
+      }
+    ]
   }
 }
-
-module webapp 'webapp.bicep' = {
-  name: 'deployWebAppContacts'
-  params: {
-    env: env
-    resourceTag: resourceTag
-    sqlConnectionString: database.outputs.connectionString
-    aadInstance: aadInstance
-    aadDomain: aadDomain
-    aadTenantId: aadTenantId
-    aadClientId: aadClientId
-    aadClientIdUri: aadClientIdUri
-  }
-}
-
-output contactsApiWebAppName string = webapp.outputs.contactsApiWebAppName
-output sqlUserName string = sqlUserName

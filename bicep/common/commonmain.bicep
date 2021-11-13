@@ -24,7 +24,7 @@ module monitoring 'monitoring.bicep' = {
   }
 }
 
-module funcstorage 'storage.bicep' = {
+module storage 'storage.bicep' = {
   name: 'deployStorage'
   params: {
     env: env
@@ -92,3 +92,36 @@ module environment 'environment.bicep' = {
     monitoring
   ]
 }
+
+
+module secretAiKey 'secrets.bicep' = {
+  name: 'deployAiKeySecret'
+  params: {
+    env: env
+    secretName: 'AIKEY'
+    secretValue: monitoring.outputs.aikey
+  }
+}
+
+module secretCosmosUrl 'secrets.bicep' = {
+  name: 'deployCosmosUrl'
+  params: {
+    env: env
+    secretName: 'COSMOSURL'
+    secretValue: cosmos.outputs.cosmosurl
+  }
+}
+
+module secretCosmosKey 'secrets.bicep' = {
+  name: 'deployCosmosKey'
+  params: {
+    env: env
+    secretName: 'COSMOSKEY'
+    secretValue: cosmos.outputs.cosmoskey
+  }
+}
+
+output containerEnvId string = environment.outputs.environmentId
+output sqlConnString string = database.outputs.connectionString
+output storageResConnString string = storage.outputs.storageResConnString
+output storageForFunctionsConnString string = storage.outputs.storageForFunctionsConnString

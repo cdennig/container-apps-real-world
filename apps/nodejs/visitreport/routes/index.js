@@ -32,35 +32,35 @@ module.exports = async function (fastify, opts) {
 
     fastify.route({
         method: 'GET',
-        url: '/reports',
+        url: '/api/reports',
         schema: listReportsSchema,
         handler: listReportsHandler
     });
 
     fastify.route({
         method: 'POST',
-        url: '/reports',
+        url: '/api/reports',
         schema: createReportsSchema,
         handler: createReportsHandler
     });
 
     fastify.route({
         method: 'GET',
-        url: '/reports/:id',
+        url: '/api/reports/:id',
         schema: readReportsSchema,
         handler: readReportsHandler
     });
 
     fastify.route({
         method: 'PUT',
-        url: '/reports/:id',
+        url: '/api/reports/:id',
         schema: updateReportsSchema,
         handler: updateReportsHandler
     });
     
     fastify.route({
         method: 'DELETE',
-        url: '/reports/:id',
+        url: '/api/reports/:id',
         schema: deleteReportsSchema,
         handler: deleteReportsHandler
     });
@@ -69,21 +69,21 @@ module.exports = async function (fastify, opts) {
     
     fastify.route({
         method: 'GET',
-        url: '/stats/timeline',
+        url: '/api/stats/timeline',
         schema: statsTimelineSchema,
         handler: statsTimelineHandler
     });
 
     fastify.route({
         method: 'GET',
-        url: '/stats/:contactid',
+        url: '/api/stats/:contactid',
         schema: statsByContactSchema,
         handler: statsByContactHandler
     });
 
     fastify.route({
         method: 'GET',
-        url: '/stats',
+        url: '/api/stats',
         schema: statsOverallSchema,
         handler: statsOverallHandler
     });
