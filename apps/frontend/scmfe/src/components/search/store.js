@@ -1,6 +1,6 @@
 import { getSearchHttpClient } from "../../utils/http-client";
 
-const BASE_PATH = "/";
+const BASE_PATH = "/api/";
 
 const state = {
     searchcontactsresults: []

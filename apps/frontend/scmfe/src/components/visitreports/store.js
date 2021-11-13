@@ -1,6 +1,6 @@
 import { getReportsHttpClient } from "../../utils/http-client";
 
-const BASE_PATH = "/reports";
+const BASE_PATH = "/api/reports";
 
 const state = {
     reportsForContact: [],

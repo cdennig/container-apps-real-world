@@ -10,13 +10,13 @@ param sqlUserPwd string
 @description('Optional. Array of role assignment objects that contain the \'roleDefinitionIdOrName\' and \'principalId\' to define RBAC role assignments on this resource. In the roleDefinitionIdOrName attribute, you can provide either the display name of the role definition, or its fully qualified ID in the following format: \'/providers/Microsoft.Authorization/roleDefinitions/c2f4ef07-c644-48eb-af81-4b1b4947fb11\'')
 
 // KeyVault Role Assignments
-param roleAssignments array
+// param roleAssignments array
 
 module common 'common/commonmain.bicep' = {
   name: 'deployCommon'
   params: {
     env: env
-    roleAssignments: roleAssignments
+    // roleAssignments: roleAssignments
     sqlUserPwd: sqlUserPwd
   }
 }
@@ -46,46 +46,30 @@ module resources 'resources/resourcesmain.bicep' = {
   ]
 }
 
-// output sqlUserName string = contacts.outputs.sqlUserName
+module search 'search/searchmain.bicep' = {
+  name: 'deploySearch'
+  params: {
+    env: env
+    containerEnvId: common.outputs.containerEnvId
+    stgForFunctionConnectionString: common.outputs.storageForFunctionsConnString
+    searchServiceAdminKey: common.outputs.searchAdminKey
+    searchServiceName: common.outputs.searchName
+  }
+  dependsOn: [
+    common
+  ]
+}
 
-// module resources 'resources/resourcesmain.bicep' = {
-//   name: 'deployResources'
-//   params: {
-//     env: env
-//   }
-//   dependsOn: [
-//     common
-//   ]
-// }
-
-// module visitreports 'visitreports/visitreportsmain.bicep' = {
-//   name: 'deployVisitReports'
-//   params: {
-//     env: env
-//   }
-//   dependsOn: [
-//     common
-//   ]
-// }
-
-// module search 'search/searchmain.bicep' = {
-//   name: 'deploySearch'
-//   params: {
-//     env: env
-//   }
-
-//   dependsOn: [
-//     common
-//   ]
-// }
-
-// module frontend 'frontend/frontendmain.bicep' = {
-//   name: 'deployFrontend'
-//   params: {
-//     env: env
-//   }
-
-//   dependsOn: [
-//     common
-//   ]
-// }
+module visitreport 'visitreports/visitreportsmain.bicep' = {
+  name: 'deployVisitreports'
+  params: {
+    env: env
+    containerEnvId: common.outputs.containerEnvId
+    stgForFunctionConnectionString: common.outputs.storageForFunctionsConnString
+    textAnalyticsEndpoint: common.outputs.textAnalyticsEndpoint
+    textAnalyticsKey: common.outputs.textAnalyticsKey
+  }
+  dependsOn: [
+    common
+  ]
+}

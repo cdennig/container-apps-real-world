@@ -24,7 +24,7 @@ const actions = {
                 "content-type": fileType
             }
         };
-        return client.post("/contactimages/binary", blob, config).then(response => {
+        return client.post("/api/contactimages/binary", blob, config).then(response => {
             commit("setImage", response.headers.location);
             dispatch("notifications/addMessage", { type: "success", message: "Image upload successful.", read: false }, { root: true });
             dispatch("wait/end", "apicall", { root: true });

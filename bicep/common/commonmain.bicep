@@ -13,8 +13,8 @@ var resourceTag = {
 @description('Sql server\'s admin password')
 param sqlUserPwd string
 
-@description('Optional. Array of role assignment objects that contain the \'roleDefinitionIdOrName\' and \'principalId\' to define RBAC role assignments on this resource. In the roleDefinitionIdOrName attribute, you can provide either the display name of the role definition, or its fully qualified ID in the following format: \'/providers/Microsoft.Authorization/roleDefinitions/c2f4ef07-c644-48eb-af81-4b1b4947fb11\'')
-param roleAssignments array
+// @description('Optional. Array of role assignment objects that contain the \'roleDefinitionIdOrName\' and \'principalId\' to define RBAC role assignments on this resource. In the roleDefinitionIdOrName attribute, you can provide either the display name of the role definition, or its fully qualified ID in the following format: \'/providers/Microsoft.Authorization/roleDefinitions/c2f4ef07-c644-48eb-af81-4b1b4947fb11\'')
+// param roleAssignments array
 
 module monitoring 'monitoring.bicep' = {
   name: 'deployMonitoring'
@@ -64,14 +64,14 @@ module cosmos 'cosmos.bicep' = {
   }
 }
 
-module keyvault 'keyvault.bicep' = {
-  name: 'deployKeyVault'
-  params: {
-    env: env
-    resourceTag: resourceTag
-    roleAssignments: roleAssignments
-  }
-}
+// module keyvault 'keyvault.bicep' = {
+//   name: 'deployKeyVault'
+//   params: {
+//     env: env
+//     resourceTag: resourceTag
+//     roleAssignments: roleAssignments
+//   }
+// }
 
 module database 'database.bicep' = {
   name: 'deployDatabase'
@@ -94,34 +94,38 @@ module environment 'environment.bicep' = {
 }
 
 
-module secretAiKey 'secrets.bicep' = {
-  name: 'deployAiKeySecret'
-  params: {
-    env: env
-    secretName: 'AIKEY'
-    secretValue: monitoring.outputs.aikey
-  }
-}
+// module secretAiKey 'secrets.bicep' = {
+//   name: 'deployAiKeySecret'
+//   params: {
+//     env: env
+//     secretName: 'AIKEY'
+//     secretValue: monitoring.outputs.aikey
+//   }
+// }
 
-module secretCosmosUrl 'secrets.bicep' = {
-  name: 'deployCosmosUrl'
-  params: {
-    env: env
-    secretName: 'COSMOSURL'
-    secretValue: cosmos.outputs.cosmosurl
-  }
-}
+// module secretCosmosUrl 'secrets.bicep' = {
+//   name: 'deployCosmosUrl'
+//   params: {
+//     env: env
+//     secretName: 'COSMOSURL'
+//     secretValue: cosmos.outputs.cosmosurl
+//   }
+// }
 
-module secretCosmosKey 'secrets.bicep' = {
-  name: 'deployCosmosKey'
-  params: {
-    env: env
-    secretName: 'COSMOSKEY'
-    secretValue: cosmos.outputs.cosmoskey
-  }
-}
+// module secretCosmosKey 'secrets.bicep' = {
+//   name: 'deployCosmosKey'
+//   params: {
+//     env: env
+//     secretName: 'COSMOSKEY'
+//     secretValue: cosmos.outputs.cosmoskey
+//   }
+// }
 
 output containerEnvId string = environment.outputs.environmentId
 output sqlConnString string = database.outputs.connectionString
 output storageResConnString string = storage.outputs.storageResConnString
 output storageForFunctionsConnString string = storage.outputs.storageForFunctionsConnString
+output searchName string = search.outputs.name
+output searchAdminKey string = search.outputs.adminkey
+output textAnalyticsEndpoint string = textanalytics.outputs.endpoint
+output textAnalyticsKey string = textanalytics.outputs.key

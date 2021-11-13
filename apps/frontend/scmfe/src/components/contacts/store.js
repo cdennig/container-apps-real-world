@@ -1,6 +1,6 @@
 import { getHttpClient } from "../../utils/http-client";
 
-const BASE_PATH = "/contacts";
+const BASE_PATH = "/api/contacts";
 
 const state = {
     contacts: [],

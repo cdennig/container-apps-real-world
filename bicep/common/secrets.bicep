@@ -12,7 +12,6 @@ param secretValue string
 
 var keyvaultName = 'kv-scm-${env}-${take(uniqueString(resourceGroup().id), 8)}'
 
-
 resource secret 'Microsoft.KeyVault/vaults/secrets@2019-09-01' = {
   name: '${keyvaultName}/${secretName}'
   properties: {

@@ -7,16 +7,6 @@
       },
       "sqlUserPwd": {
           "value": "Ch@angeMe!1"
-      },
-      "roleAssignments": {
-          "value":  [
-            {
-              "roleDefinitionIdOrName": "Key Vault Administrator (preview)",
-              "principalIds": [
-                "5af8b213-0f0e-490e-bdd7-a574276ef0d5"
-              ]
-            }
-          ]
       }
     }
   }
