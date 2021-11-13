@@ -23,7 +23,7 @@ module frontendService '../container-http.bicep' = {
     location: location
     containerAppName: 'frontend'
     environmentId: containerEnvId
-    containerImage: 'ghcr.io/cdennig/adc-frontend-ui:2.0'
+    containerImage: 'ghcr.io/cdennig/adc-frontend-ui:2.1'
     containerPort: 80
     isExternalIngress: true
     minReplicas: 1
