@@ -162,3 +162,5 @@ module funcImageResizerService '../container-worker.bicep' = {
     ]
   }
 }
+
+output resourcesUri string = resourcesService.outputs.fqdn

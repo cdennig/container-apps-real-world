@@ -65,3 +65,5 @@ module contactsService '../container-http.bicep' = {
     ]
   }
 }
+
+output contactsUri string = contactsService.outputs.fqdn

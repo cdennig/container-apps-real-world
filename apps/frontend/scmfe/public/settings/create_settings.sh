@@ -2,10 +2,10 @@
 
 cat << EOF > /usr/share/nginx/html/settings/settings.js
 var uisettings = {
-    "endpoint": "$SCMCONTACTSEP",
-    "resourcesEndpoint": "$SCMRESOURCESEP",
-    "searchEndpoint": "$SCMSEARCHEP",
-    "reportsEndpoint": "$SCMREPORTSEP",
+    "endpoint": "https://$SCMCONTACTSEP/",
+    "resourcesEndpoint": "https://$SCMRESOURCESEP/",
+    "searchEndpoint": "https://$SCMSEARCHEP/",
+    "reportsEndpoint": "https://$SCMREPORTSEP/",
     "enableStats": "true",
     "aiKey": "$AIKEY"
 }

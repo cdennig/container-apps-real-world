@@ -169,3 +169,5 @@ module funcTextAnalyticsService '../container-worker.bicep' = {
     ]
   }
 }
+
+output visitreportsUri string = visitreportsService.outputs.fqdn

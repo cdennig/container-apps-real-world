@@ -73,3 +73,22 @@ module visitreport 'visitreports/visitreportsmain.bicep' = {
     common
   ]
 }
+
+module frontend 'frontend/frontendmain.bicep' = {
+  name: 'deployFrontend'
+  params: {
+    env: env
+    containerEnvId: common.outputs.containerEnvId
+    contactsUri: contacts.outputs.contactsUri
+    resourcesUri: resources.outputs.resourcesUri
+    searchUri: search.outputs.searchUri
+    visitreportsUri: visitreport.outputs.visitreportsUri
+  }
+  dependsOn: [
+    common
+    contacts
+    resources
+    search
+    visitreport
+  ]
+}

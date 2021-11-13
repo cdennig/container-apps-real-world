@@ -143,3 +143,5 @@ module funcSearchIndexerService '../container-worker.bicep' = {
     ]
   }
 }
+
+output searchUri string = searchService.outputs.fqdn
