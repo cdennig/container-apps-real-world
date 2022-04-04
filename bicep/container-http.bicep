@@ -15,7 +15,6 @@ param revisionMode string = 'multiple'
 param secrets array = []
 var cpu = json('0.5')
 var memory = '1.0Gi'
-var registrySecretRefName = 'docker-password'
 
 resource containerApp 'Microsoft.Web/containerApps@2021-03-01' = {
   name: containerAppName

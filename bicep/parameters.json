@@ -3,7 +3,7 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
       "env": {
-          "value": "devd4"
+          "value": "dev"
       },
       "sqlUserPwd": {
           "value": "Ch@angeMe!1"
